@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện Tập Bài 31: Động Học Của Chuyển Động Tròn Đều</title>
+    <!-- Tích hợp MathJax hiển thị công thức chuẩn Mathtype -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #dbeafe;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 60px; }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        header h1 { font-size: 1.4rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        header p { font-size: 0.95rem; opacity: 0.9; }
+
+        .container { max-width: 920px; margin: 20px auto; padding: 0 15px; }
+
+        /* 3 Cụm Nút / Ô nhập chính theo yêu cầu */
+        .control-bar {
+            background: var(--card);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 2px solid #cbd5e1;
+        }
+        @media (max-width: 768px) {
+            .control-bar { grid-template-columns: 1fr; }
+        }
+        .student-inputs {
+            display: flex;
+            gap: 8px;
+        }
+        .student-inputs input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .student-inputs input:focus { border-color: var(--primary); }
+
+        .btn {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-sound { background: #8b5cf6; color: white; }
+        .btn-sound.muted { background: #64748b; }
+        .btn-report { background: var(--success); color: white; }
+        .btn-report:hover { background: #15803d; }
+
+        /* Tabs Cấp độ */
+        .level-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .tab-btn {
+            background: #e2e8f0;
+            color: #475569;
+            padding: 14px 10px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+            position: relative;
+        }
+        .tab-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .tab-btn.locked {
+            background: #f1f5f9;
+            color: #94a3b8;
+            border: 2px dashed #cbd5e1;
+        }
+        .badge {
+            display: inline-block;
+            font-size: 0.78rem;
+            padding: 2px 8px;
+            border-radius: 99px;
+            margin-top: 4px;
+            background: #cbd5e1;
+            color: #1e293b;
+        }
+        .tab-btn.active .badge { background: var(--primary); color: white; }
+
+        /* Thanh trạng thái tiến độ & Chế độ GV */
+        .status-banner {
+            background: var(--warning-bg);
+            border-left: 5px solid var(--warning);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .teacher-box {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .teacher-box input[type="password"] {
+            width: 115px;
+            padding: 6px 10px;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 3px;
+            -webkit-text-security: disc;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            background: #334155;
+            color: white;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-retry {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Card câu hỏi */
+        .question-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+        }
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .q-text { font-size: 1.05rem; margin-bottom: 14px; font-weight: 500; }
+        .svg-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0 16px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        /* Các lựa chọn đáp án */
+        .options-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 640px) { .options-list { grid-template-columns: 1fr; } }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 0.98rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+        .option-btn:disabled { cursor: default; }
+        .option-btn.correct {
+            background: var(--success-bg) !important;
+            border-color: var(--success) !important;
+            color: #065f46;
+            font-weight: 700;
+        }
+        .option-btn.wrong {
+            background: var(--danger-bg) !important;
+            border-color: var(--danger) !important;
+            color: #991b1b;
+        }
+        .opt-letter {
+            min-width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        .option-btn.correct .opt-letter { background: var(--success); color: white; }
+        .option-btn.wrong .opt-letter { background: var(--danger); color: white; }
+
+        /* Giải thích hiện ngay sau khi chọn */
+        .feedback-box {
+            margin-top: 14px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .feedback-box.show { display: block; animation: fadeIn 0.25s ease-in; }
+        .feedback-box.ok { background: var(--success-bg); border-left: 4px solid var(--success); color: #064e3b; }
+        .feedback-box.err { background: var(--danger-bg); border-left: 4px solid var(--danger); color: #7f1d1d; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modal báo cáo kết quả */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.65);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 15px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-card {
+            background: white;
+            max-width: 520px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+        .modal-card h2 { color: var(--primary); margin-bottom: 12px; }
+        .report-box {
+            background: #f8fafc;
+            border: 2px dashed #94a3b8;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: left;
+            margin: 15px 0;
+            font-size: 0.98rem;
+        }
+        .report-box p { margin: 6px 0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>CHỦ ĐỀ 31: ĐỘNG HỌC CỦA CHUYỂN ĐỘNG TRÒN ĐỀU</h1>
+    <p> Đề luyện tập tương tác tại nhà – Tự động đảo câu hỏi & vị trí đáp án </p>
+</header>
+
+<div class="container">
+    <!-- 3 NÚT / Ô CHỨC NĂNG RÕ RÀNG THEO YÊU CẦU -->
+    <div class="control-bar">
+        <!-- 1. Nút âm thanh vui nhộn, bất ngờ -->
+        <button id="btnSound" class="btn btn-sound" onclick="toggleSound()">
+            🔊 Âm thanh: BẬT (Vui nhộn)
+        </button>
+
+        <!-- 2. Ô nhập họ tên, lớp -->
+        <div class="student-inputs">
+            <input type="text" id="studentName" placeholder="Nhập Họ và tên học sinh...">
+            <input type="text" id="studentClass" placeholder="Lớp (VD: 10A1)" style="max-width: 140px;">
+        </div>
+
+        <!-- 3. Nút báo họ tên, kết quả thực hiện -->
+        <button class="btn btn-report" onclick="showReportModal()">
+            🏆 Báo Họ Tên & Kết Quả
+        </button>
+    </div>
+
+    <!-- CÁC TAB CẤP ĐỘ -->
+    <div class="level-tabs">
+        <div id="tab1" class="tab-btn active" onclick="switchLevel(1)">
+            <div>CẤP ĐỘ 1 (Nhận biết - 12 câu)</div>
+            <span class="badge" id="badge1">Đạt 12/12: 0/3 lần</span>
+        </div>
+        <div id="tab2" class="tab-btn locked" onclick="switchLevel(2)">
+            <div>🔒 CẤP ĐỘ 2 (7 - 8 Điểm: 5 câu)</div>
+            <span class="badge" id="badge2">Chưa mở khóa</span>
+        </div>
+        <div id="tab3" class="tab-btn locked" onclick="switchLevel(3)">
+            <div>🔒 CẤP ĐỘ 3 (9 - 10 Điểm: 5 câu)</div>
+            <span class="badge" id="badge3">Chưa mở khóa</span>
+        </div>
+    </div>
+
+    <!-- THANH TRẠNG THÁI & MỞ KHÓA GIÁO VIÊN (ẨN MÃ DẠNG ****) -->
+    <div class="status-banner">
+        <div>
+            <strong id="statusTitle">📌 Nhiệm vụ Cấp độ 1:</strong>
+            <span id="statusDesc">Làm hết 12 câu và đạt đúng 12/12 đủ <b>3 lần</b> để mở khóa Cấp độ 2 & 3!</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn-retry" onclick="retryCurrentLevel()">🔄 Đảo đề & Làm lại Cấp độ này</button>
+            <div class="teacher-box">
+                <input type="password" id="teacherCode" placeholder="****" autocomplete="off" title="Nhập mật mã Giáo viên">
+                <button class="btn-sm" onclick="unlockByTeacher()">🔑 Mở khóa GV</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VÙNG HIỂN THỊ DANH SÁCH CÂU HỎI -->
+    <div id="quizArea"></div>
+</div>
+
+<!-- MODAL BÁO CÁO KẾT QUẢ -->
+<div id="reportModal" class="modal-overlay">
+    <div class="modal-card">
+        <h2>📋 PHIẾU BÁO CÁO KẾT QUẢ HỌC TẬP</h2>
+        <div class="report-box" id="reportContent"></div>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="btn btn-report" onclick="copyReport()">📋 Sao chép gửi Giáo viên</button>
+            <button class="btn" style="background:#64748b; color:white;" onclick="closeReportModal()">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* =========================================================================
+   1. HỆ THỐNG ÂM THANH VUI NHỘN, BẤT NGỜ (WEB AUDIO SYNTHESIS)
+   ========================================================================= */
+let soundEnabled = true;
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById('btnSound');
+    if (soundEnabled) {
+        btn.innerHTML = '🔊 Âm thanh: BẬT (Vui nhộn)';
+        btn.classList.remove('muted');
+        playFunnySound(true);
+    } else {
+        btn.innerHTML = '🔇 Âm thanh: ĐÃ TẮT';
+        btn.classList.add('muted');
+    }
+}
+
+function playFunnySound(isCorrect) {
+    if (!soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+
+    if (isCorrect) {
+        const style = Math.random() > 0.5 ? 1 : 2;
+        if (style === 1) {
+            const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+            notes.forEach((freq, idx) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.065);
+                gain.gain.setValueAtTime(0.22, now + idx * 0.065);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.065 + 0.22);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now + idx * 0.065);
+                osc.stop(now + idx * 0.065 + 0.23);
+            });
+        } else {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(420, now);
+            osc.frequency.exponentialRampToValueAtTime(1250, now + 0.18);
+            osc.frequency.setValueAtTime(920, now + 0.2);
+            osc.frequency.exponentialRampToValueAtTime(1550, now + 0.4);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.42);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.43);
+        }
+    } else {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.2);
+        osc.frequency.linearRampToValueAtTime(220, now + 0.28);
+        osc.frequency.linearRampToValueAtTime(95, now + 0.55);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.008, now + 0.56);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.57);
+    }
+}
+
+/* =========================================================================
+   2. KHO HÌNH VẼ SVG MINH HỌA SINH ĐỘNG, VECTƠ & ĐỒ THỊ CHUẨN XÁC (BÀI 31)
+   ========================================================================= */
+const SVGs = {
+    // Hình 1: Cung tròn s, góc ở tâm theta và bán kính r (giống trang 2 tài liệu)
+    arcRadian: `
+    <svg viewBox="0 0 420 185" width="100%" style="max-width:390px;">
+        <defs>
+            <marker id="arrArc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+            </marker>
+        </defs>
+        <!-- Tâm O -->
+        <circle cx="80" cy="150" r="4" fill="#0f172a"/>
+        <text x="62" y="162" font-weight="bold" font-size="14">O</text>
+        <!-- Hai bán kính OA và OB -->
+        <line x1="80" y1="150" x2="310" y2="125" stroke="#1e40af" stroke-width="2.5"/>
+        <line x1="80" y1="150" x2="235" y2="30" stroke="#1e40af" stroke-width="2.5"/>
+        <text x="200" y="155" fill="#1e40af" font-weight="bold" font-size="15">r</text>
+        <text x="320" y="130" font-weight="bold" font-size="14">A</text>
+        <text x="235" y="22" font-weight="bold" font-size="14">B</text>
+        <!-- Cung AB (độ dài s) -->
+        <path d="M 310 125 A 232 232 0 0 0 235 30" fill="none" stroke="#dc2626" stroke-width="3.5"/>
+        <text x="295" y="70" fill="#dc2626" font-weight="bold" font-size="16">s</text>
+        <!-- Góc chắn tâm theta -->
+        <path d="M 145 143 A 65 65 0 0 0 130 111" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrArc)"/>
+        <text x="155" y="128" fill="#16a34a" font-weight="bold" font-size="16">θ = s / r</text>
+    </svg>`,
+
+    // Hình 2: Vectơ vận tốc tiếp tuyến trong chuyển động tròn đều (giống trang 2 tài liệu)
+    tangentVelocity: `
+    <svg viewBox="0 0 460 210" width="100%" style="max-width:420px;">
+        <defs>
+            <marker id="vecV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+            </marker>
+        </defs>
+        <!-- Đường tròn quỹ đạo -->
+        <circle cx="190" cy="115" r="72" fill="#eff6ff" stroke="#1e40af" stroke-width="2.5"/>
+        <circle cx="190" cy="115" r="4" fill="#0f172a"/>
+        <text x="175" y="130" font-weight="bold" font-size="13">O</text>
+        <!-- Điểm M trên đỉnh: bán kính OM và vectơ vM tiếp tuyến ngang -->
+        <line x1="190" y1="115" x2="190" y2="43" stroke="#2563eb" stroke-width="2" stroke-dasharray="4,3"/>
+        <rect x="190" y="43" width="9" height="9" fill="none" stroke="#0f172a" stroke-width="1.5"/>
+        <circle cx="190" cy="43" r="4" fill="#dc2626"/>
+        <text x="172" y="36" font-weight="bold" font-size="13">M</text>
+        <line x1="190" y1="43" x2="275" y2="43" stroke="#dc2626" stroke-width="3" marker-end="url(#vecV)"/>
+        <text x="245" y="32" fill="#dc2626" font-weight="bold" font-size="14">v⃗ₘ</text>
+        <!-- Điểm N bên sườn phải -->
+        <line x1="190" y1="115" x2="252" y2="79" stroke="#2563eb" stroke-width="2" stroke-dasharray="4,3"/>
+        <circle cx="252" cy="79" r="4" fill="#dc2626"/>
+        <text x="262" y="75" font-weight="bold" font-size="13">N</text>
+        <line x1="252" y1="79" x2="292" y2="148" stroke="#dc2626" stroke-width="3" marker-end="url(#vecV)"/>
+        <text x="302" y="145" fill="#dc2626" font-weight="bold" font-size="14">v⃗ₙ</text>
+        <text x="345" y="75" fill="#1e3a8a" font-size="12" font-weight="bold">• Phương: Tiếp tuyến</text>
+        <text x="345" y="95" fill="#1e3a8a" font-size="12" font-weight="bold">• Độ lớn: v = ω.r = const</text>
+        <text x="345" y="115" fill="#dc2626" font-size="12" font-weight="bold">• Hướng: Luôn thay đổi</text>
+    </svg>`,
+
+    // Hình 3: Cánh quạt quay đều và 2 điểm A, B có bán kính R1, R2
+    fanBlades: `
+    <svg viewBox="0 0 460 190" width="100%" style="max-width:420px;">
+        <defs>
+            <marker id="arrRot" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+            </marker>
+        </defs>
+        <!-- Quỹ đạo tròn ngoài và trong -->
+        <circle cx="180" cy="95" r="78" fill="none" stroke="#94a3b8" stroke-dasharray="4,4"/>
+        <circle cx="180" cy="95" r="39" fill="none" stroke="#94a3b8" stroke-dasharray="3,3"/>
+        <!-- Cánh quạt ngang mang 2 điểm B (R2) và A (R1) -->
+        <rect x="180" y="83" width="78" height="24" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+        <!-- 2 cánh quạt còn lại -->
+        <path d="M 180 95 L 135 30 Q 150 20 165 35 Z" fill="#e2e8f0" stroke="#64748b"/>
+        <path d="M 180 95 L 135 160 Q 150 170 165 155 Z" fill="#e2e8f0" stroke="#64748b"/>
+        <!-- Tâm O, điểm B (trung điểm) và điểm A (đầu cánh) -->
+        <circle cx="180" cy="95" r="6" fill="#0f172a"/>
+        <text x="165" y="112" font-weight="bold" font-size="12">O</text>
+        <circle cx="219" cy="95" r="4.5" fill="#16a34a"/>
+        <text x="214" y="78" fill="#16a34a" font-weight="bold" font-size="12">R₂</text>
+        <circle cx="255" cy="95" r="4.5" fill="#dc2626"/>
+        <text x="250" y="78" fill="#dc2626" font-weight="bold" font-size="12">R₁</text>
+        <!-- Mũi tên chiều quay omega -->
+        <path d="M 245 45 A 75 75 0 0 1 268 75" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrRot)"/>
+        <text x="278" y="62" fill="#16a34a" font-weight="bold" font-size="14">ω</text>
+        <text x="310" y="95" fill="#1e3a8a" font-size="12" font-weight="bold">Cùng cánh quạt:</text>
+        <text x="310" y="114" fill="#0f172a" font-size="12">• T₁ = T₂ ; ω₁ = ω₂</text>
+        <text x="310" y="132" fill="#dc2626" font-size="12" font-weight="bold">• v = ω.R (tỉ lệ thuận với R)</text>
+    </svg>`,
+
+    // Hình 4: Mặt đồng hồ kim giờ - kim phút - kim giây
+    clockFace: `
+    <svg viewBox="0 0 440 185" width="100%" style="max-width:400px;">
+        <circle cx="140" cy="92" r="75" fill="#ffffff" stroke="#1e3a8a" stroke-width="4"/>
+        <circle cx="140" cy="92" r="4" fill="#0f172a"/>
+        <text x="140" y="32" font-weight="bold" font-size="13" text-anchor="middle">12</text>
+        <text x="202" y="97" font-weight="bold" font-size="13" text-anchor="middle">3</text>
+        <text x="140" y="158" font-weight="bold" font-size="13" text-anchor="middle">6</text>
+        <text x="78" y="97" font-weight="bold" font-size="13" text-anchor="middle">9</text>
+        <!-- Kim giờ -->
+        <line x1="140" y1="92" x2="178" y2="92" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+        <!-- Kim phút -->
+        <line x1="140" y1="92" x2="140" y2="38" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+        <!-- Kim giây -->
+        <line x1="140" y1="92" x2="100" y2="128" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+        <!-- Chú thích chu kì chuẩn -->
+        <text x="245" y="55" fill="#1e3a8a" font-weight="bold" font-size="13">Chu kì quay 1 vòng:</text>
+        <text x="245" y="80" fill="#dc2626" font-size="12.5" font-weight="bold">• Kim giây: T = 60 s (1 phút)</text>
+        <text x="245" y="103" fill="#2563eb" font-size="12.5" font-weight="bold">• Kim phút: T = 3600 s (1 giờ)</text>
+        <text x="245" y="126" fill="#0f172a" font-size="12.5" font-weight="bold">• Kim giờ: T = 43200 s (12 giờ)</text>
+    </svg>`,
+
+    // Hình 5: Đồ thị sự phụ thuộc của tốc độ dài v theo bán kính r có đường gióng tọa độ
+    graphVR: `
+    <svg viewBox="0 0 460 240" width="100%" style="max-width:420px;">
+        <defs>
+            <marker id="axArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#0f172a"/>
+            </marker>
+        </defs>
+        <!-- Hệ trục tọa độ -->
+        <line x1="60" y1="200" x2="410" y2="200" stroke="#0f172a" stroke-width="2" marker-end="url(#axArr)"/>
+        <line x1="60" y1="200" x2="60" y2="25" stroke="#0f172a" stroke-width="2" marker-end="url(#axArr)"/>
+        <text x="415" y="215" font-weight="bold" font-size="13">r (m)</text>
+        <text x="15" y="28" font-weight="bold" font-size="13">v (m/s)</text>
+        <text x="45" y="215" font-weight="bold" font-size="12">O</text>
+
+        <!-- Đường gióng điểm 1: r = 0,2 m ; v = 2,0 m/s -->
+        <line x1="180" y1="200" x2="180" y2="130" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="60" y1="130" x2="180" y2="130" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <text x="180" y="218" font-size="12" font-weight="bold" text-anchor="middle" fill="#1e40af">0,2</text>
+        <text x="52" y="134" font-size="12" font-weight="bold" text-anchor="end" fill="#1e40af">2,0</text>
+
+        <!-- Đường gióng điểm 2: r = 0,4 m ; v = 4,0 m/s -->
+        <line x1="300" y1="200" x2="300" y2="60" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="60" y1="60" x2="300" y2="60" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <text x="300" y="218" font-size="12" font-weight="bold" text-anchor="middle" fill="#16a34a">0,4</text>
+        <text x="52" y="64" font-size="12" font-weight="bold" text-anchor="end" fill="#16a34a">4,0</text>
+
+        <!-- Đường thẳng v = omega.r -->
+        <line x1="60" y1="200" x2="335" y2="40" stroke="#2563eb" stroke-width="3.5"/>
+        <circle cx="180" cy="130" r="5" fill="#dc2626"/>
+        <circle cx="300" cy="60" r="5" fill="#16a34a"/>
+        <text x="235" y="45" fill="#1e40af" font-size="13" font-weight="bold">v = ω.r</text>
+    </svg>`
+};
+
+/* =========================================================================
+   3. NGÂN HÀNG CÂU HỎI BÁM SÁT BÀI 31: ĐỘNG HỌC CỦA CHUYỂN ĐỘNG TRÒN ĐỀU
+      - CẤP 1: 12 CÂU NHẬN BIẾT ĐƠN GIẢN
+      - CẤP 2 & 3: 10 CÂU MỨC ĐỘ THÔNG HIỂU CƠ BẢN
+   ========================================================================= */
+const questionBank = {
+    // ================= CẤP ĐỘ 1: 12 CÂU NHẬN BIẾT ĐƠN GIẢN =================
+    1: [
+        {
+            id: "L1_1",
+            text: "Khi một vật chuyển động trên đường tròn bán kính $r$, đi được cung tròn có độ dài $s$ thì góc ở tâm $\\theta$ (tính theo đơn vị radian) chắn cung đó được xác định bằng công thức nào?",
+            svg: SVGs.arcRadian,
+            options: [
+                { text: "$\\theta = \\dfrac{s}{r}$", isCorrect: true },
+                { text: "$\\theta = s \\cdot r$", isCorrect: false },
+                { text: "$\\theta = \\dfrac{r}{s}$", isCorrect: false },
+                { text: "$\\theta = s^2 \\cdot r$", isCorrect: false }
+            ],
+            explain: "Theo định nghĩa góc chắn tâm tính bằng radian (trang 2 tài liệu): $\\theta = \\dfrac{s}{r}$."
+        },
+        {
+            id: "L1_2",
+            text: "Trong hệ đơn vị đo góc, mối liên hệ giữa đơn vị độ ($^\\circ$) và đơn vị radian ($\\text{rad}$) ứng với nửa vòng tròn ($180^\\circ$) là:",
+            svg: SVGs.arcRadian,
+            options: [
+                { text: "$180^\\circ = \\pi\\text{ rad}$", isCorrect: true },
+                { text: "$180^\\circ = 2\\pi\\text{ rad}$", isCorrect: false },
+                { text: "$180^\\circ = 1\\text{ rad}$", isCorrect: false },
+                { text: "$180^\\circ = \\dfrac{\\pi}{2}\\text{ rad}$", isCorrect: false }
+            ],
+            explain: "Cả vòng tròn $360^\\circ$ ứng với $2\\pi\\text{ rad}$, nên nửa vòng tròn $180^\\circ = \\pi\\text{ rad}$."
+        },
+        {
+            id: "L1_3",
+            text: "Chuyển động của vật nào dưới đây là <b>chuyển động tròn đều</b>?",
+            svg: SVGs.clockFace,
+            options: [
+                { text: "Chuyển động của đầu kim phút đồng hồ đang chạy bình thường.", isCorrect: true },
+                { text: "Chuyển động của pít-tông trong động cơ đốt trong.", isCorrect: false },
+                { text: "Chuyển động quay của bánh xe máy khi đang bóp phanh dừng lại.", isCorrect: false },
+                { text: "Chuyển động đung đưa của quả lắc đồng hồ.", isCorrect: false }
+            ],
+            explain: "Đầu kim phút vạch nên quỹ đạo tròn với tốc độ không đổi nên là chuyển động tròn đều (Câu 2 & Câu 4 trang 3 tài liệu)."
+        },
+        {
+            id: "L1_4",
+            text: "Trong chuyển động tròn đều, <b>tốc độ góc</b> $\\omega$ được xác định bằng thương số giữa độ dịch chuyển góc $\\theta$ và thời gian dịch chuyển $t$ theo công thức nào? Đơn vị của tốc độ góc là gì?",
+            svg: SVGs.arcRadian,
+            options: [
+                { text: "$\\omega = \\dfrac{\\theta}{t}$, đơn vị là $\\text{rad/s}$.", isCorrect: true },
+                { text: "$\\omega = \\theta \\cdot t$, đơn vị là $\\text{m/s}$.", isCorrect: false },
+                { text: "$\\omega = \\dfrac{t}{\\theta}$, đơn vị là $\\text{Hz}$.", isCorrect: false },
+                { text: "$\\omega = \\dfrac{s}{r}$, đơn vị là $\\text{rad}$.", isCorrect: false }
+            ],
+            explain: "Tốc độ góc bằng độ dịch chuyển góc chia cho thời gian dịch chuyển: $\\omega = \\dfrac{\\theta}{t}$, đơn vị chuẩn là radian trên giây ($\\text{rad/s}$)."
+        },
+        {
+            id: "L1_5",
+            text: "<b>Chu kì</b> $T$ của chuyển động tròn đều là gì?",
+            svg: SVGs.clockFace,
+            options: [
+                { text: "Là thời gian để vật đi được trọn một vòng.", isCorrect: true },
+                { text: "Là số vòng mà vật đi được trong 1 giây.", isCorrect: false },
+                { text: "Là quãng đường vật đi được trong 1 giây.", isCorrect: false },
+                { text: "Là góc mà bán kính quét được trong 1 giây.", isCorrect: false }
+            ],
+            explain: "Theo định nghĩa: Chu kì $T$ của chuyển động tròn đều là thời gian để vật quay hết một vòng (đơn vị: giây)."
+        },
+        {
+            id: "L1_6",
+            text: "<b>Tần số</b> $f$ của chuyển động tròn đều là số vòng mà vật đi được trong 1 giây. Hệ thức liên hệ giữa tần số $f$ và chu kì $T$ là:",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "$f = \\dfrac{1}{T}$ (đơn vị: $\\text{Hz}$ hoặc $\\text{vòng/s}$).", isCorrect: true },
+                { text: "$f = 2\\pi T$ (đơn vị: $\\text{Hz}$).", isCorrect: false },
+                { text: "$f = \\dfrac{2\\pi}{T}$ (đơn vị: $\\text{rad/s}$).", isCorrect: false },
+                { text: "$f = T^2$ (đơn vị: $\\text{s}$).", isCorrect: false }
+            ],
+            explain: "Chu kì $T$ và tần số $f$ nghịch đảo với nhau: $f = \\dfrac{1}{T}$, đơn vị là héc ($\\text{Hz}$) hoặc vòng/s."
+        },
+        {
+            id: "L1_7",
+            text: "Một vật chuyển động tròn đều với chu kì $T$, tần số $f$ và tốc độ góc $\\omega$. Cặp công thức liên hệ nào sau đây là <b>đúng</b>?",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "$\\omega = \\dfrac{2\\pi}{T}$ và $\\omega = 2\\pi f$", isCorrect: true },
+                { text: "$\\omega = 2\\pi T$ và $\\omega = 2\\pi f$", isCorrect: false },
+                { text: "$\\omega = \\dfrac{2\\pi}{T}$ và $\\omega = \\dfrac{2\\pi}{f}$", isCorrect: false },
+                { text: "$\\omega = 2\\pi T$ và $\\omega = \\dfrac{2\\pi}{f}$", isCorrect: false }
+            ],
+            explain: "Trong một chu kì $T$, bán kính quét góc $2\\pi\\text{ rad}$ nên $\\omega = \\dfrac{2\\pi}{T} = 2\\pi f$ (Câu 8 trang 4 tài liệu)."
+        },
+        {
+            id: "L1_8",
+            text: "Một vật chuyển động tròn đều trên quỹ đạo bán kính $r$ với tốc độ góc $\\omega$. Công thức liên hệ giữa tốc độ dài $v$, tốc độ góc $\\omega$ và bán kính $r$ là:",
+            svg: SVGs.tangentVelocity,
+            options: [
+                { text: "$v = \\omega \\cdot r$", isCorrect: true },
+                { text: "$v = \\dfrac{\\omega}{r}$", isCorrect: false },
+                { text: "$v = \\dfrac{r}{\\omega}$", isCorrect: false },
+                { text: "$v = \\omega^2 \\cdot r$", isCorrect: false }
+            ],
+            explain: "Tốc độ dài tỉ lệ thuận với bán kính quỹ đạo theo công thức: $v = \\omega \\cdot r$."
+        },
+        {
+            id: "L1_9",
+            text: "Trong chuyển động tròn đều, <b>vectơ vận tốc</b> $\\vec{v}$ tại mỗi điểm trên quỹ đạo có đặc điểm nào sau đây?",
+            svg: SVGs.tangentVelocity,
+            options: [
+                { text: "Có độ lớn không đổi và có phương luôn trùng với tiếp tuyến của đường tròn quỹ đạo.", isCorrect: true },
+                { text: "Có cả hướng và độ lớn luôn không đổi theo thời gian.", isCorrect: false },
+                { text: "Có phương luôn trùng với bán kính hướng vào tâm quỹ đạo.", isCorrect: false },
+                { text: "Có độ lớn thay đổi liên tục và phương tiếp tuyến với quỹ đạo.", isCorrect: false }
+            ],
+            explain: "Trong chuyển động tròn đều, vectơ vận tốc $\\vec{v}$ luôn tiếp tuyến với quỹ đạo (vuông góc với bán kính), có độ lớn không đổi nhưng hướng luôn thay đổi (Câu 12 trang 4 tài liệu)."
+        },
+        {
+            id: "L1_10",
+            text: "<b>[Phép tính 1 bước]</b> Một vật chuyển động tròn đều trên đường tròn bán kính $r = 0,5\\text{ m}$. Khi vật đi được cung tròn có độ dài $s = 1,0\\text{ m}$ thì góc ở tâm $\\theta$ mà bán kính quét được bằng bao nhiêu radian?",
+            svg: SVGs.arcRadian,
+            options: [
+                { text: "$2,0\\text{ rad}$", isCorrect: true },
+                { text: "$0,5\\text{ rad}$", isCorrect: false },
+                { text: "$1,5\\text{ rad}$", isCorrect: false },
+                { text: "$0,25\\text{ rad}$", isCorrect: false }
+            ],
+            explain: "Áp dụng công thức: $\\theta = \\dfrac{s}{r} = \\dfrac{1,0}{0,5} = 2,0\\text{ rad}$."
+        },
+        {
+            id: "L1_11",
+            text: "<b>[Phép tính 1 bước]</b> Một bánh xe quay đều $100$ vòng trong thời gian $4$ giây. Chu kì quay $T$ của bánh xe là:",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "$0,04\\text{ s}$", isCorrect: true },
+                { text: "$25\\text{ s}$", isCorrect: false },
+                { text: "$0,02\\text{ s}$", isCorrect: false },
+                { text: "$0,03\\text{ s}$", isCorrect: false }
+            ],
+            explain: "Chu kì là thời gian quay 1 vòng: $T = \\dfrac{t}{N} = \\dfrac{4}{100} = 0,04\\text{ s}$ (Câu 9 trang 4 tài liệu)."
+        },
+        {
+            id: "L1_12",
+            text: "<b>[Phép tính 1 bước]</b> Một điểm ở đầu cánh quạt trần cách tâm quay $r = 0,5\\text{ m}$ đang quay đều với tốc độ góc $\\omega = 10\\text{ rad/s}$. Tốc độ dài $v$ của điểm đó là:",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "$5\\text{ m/s}$", isCorrect: true },
+                { text: "$20\\text{ m/s}$", isCorrect: false },
+                { text: "$10,5\\text{ m/s}$", isCorrect: false },
+                { text: "$0,05\\text{ m/s}$", isCorrect: false }
+            ],
+            explain: "Áp dụng công thức: $v = \\omega \\cdot r = 10 \\times 0,5 = 5\\text{ m/s}$."
+        }
+    ],
+
+    // ================= CẤP ĐỘ 2: 5 CÂU THÔNG HIỂU CƠ BẢN (7 - 8 ĐIỂM) =================
+    2: [
+        {
+            id: "L2_1",
+            text: "Khi nói về các đại lượng đặc trưng của chuyển động tròn đều, nhận xét nào sau đây là <b>đúng</b>?",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "Chuyển động nào có tần số $f$ lớn hơn thì có chu kì $T$ nhỏ hơn.", isCorrect: true },
+                { text: "Chu kì quay $T$ càng lớn thì vật quay càng nhanh.", isCorrect: false },
+                { text: "Tốc độ góc $\\omega$ càng nhỏ thì vật quay càng nhanh.", isCorrect: false },
+                { text: "Khi bán kính quỹ đạo $r$ tăng thì tốc độ góc $\\omega$ luôn tăng tỉ lệ thuận với $r$.", isCorrect: false }
+            ],
+            explain: "Vì $T = \\dfrac{1}{f}$ nên tần số $f$ càng lớn thì chu kì $T$ càng nhỏ (vật quay càng nhanh) – Câu 6 trang 3 tài liệu."
+        },
+        {
+            id: "L2_2",
+            text: "Trên một cánh quạt đang quay đều, người ta lấy hai điểm có bán kính $R_1$ và $R_2$ với $R_1 = 2R_2$. Gọi chu kì và tốc độ dài của hai điểm đó lần lượt là $T_1, T_2$ và $v_1, v_2$. Hệ thức nào sau đây là <b>đúng</b>?",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "$T_1 = T_2$ và $v_1 = 2v_2$", isCorrect: true },
+                { text: "$T_1 = 2T_2$ và $v_1 = 2v_2$", isCorrect: false },
+                { text: "$T_1 = T_2$ và $v_2 = 2v_1$", isCorrect: false },
+                { text: "$T_1 = 2T_2$ và $v_1 = v_2$", isCorrect: false }
+            ],
+            explain: "Mọi điểm trên cùng một cánh quạt có cùng chu kì ($T_1 = T_2$) và cùng tốc độ góc $\\omega$. Do $v = \\omega R$ nên $R_1 = 2R_2 \\Rightarrow v_1 = 2v_2$ (Câu 13 trang 4 & Câu 4 trang 15 tài liệu)."
+        },
+        {
+            id: "L2_3",
+            text: "Một chất điểm chuyển động đều trên một quỹ đạo tròn. Biết trong 1 phút ($60\\text{ s}$) nó quay được $300$ vòng. Tần số $f$ và tốc độ góc $\\omega$ của chất điểm lần lượt là:",
+            svg: SVGs.tangentVelocity,
+            options: [
+                { text: "$f = 5\\text{ Hz};\\quad \\omega = 10\\pi\\text{ rad/s}$.", isCorrect: true },
+                { text: "$f = 5\\text{ Hz};\\quad \\omega = 5\\pi\\text{ rad/s}$.", isCorrect: false },
+                { text: "$f = 300\\text{ Hz};\\quad \\omega = 600\\pi\\text{ rad/s}$.", isCorrect: false },
+                { text: "$f = 0,2\\text{ Hz};\\quad \\omega = 10\\pi\\text{ rad/s}$.", isCorrect: false }
+            ],
+            explain: "• Số vòng quay trong 1 giây (tần số): $f = \\dfrac{300}{60} = 5\\text{ vòng/s} = 5\\text{ Hz}$.<br>• Tốc độ góc: $\\omega = 2\\pi f = 2\\pi \\times 5 = 10\\pi\\text{ rad/s}$ (Câu 8 trang 16 tài liệu)."
+        },
+        {
+            id: "L2_4",
+            text: "Một chiếc đồng hồ treo tường có kim giây dài $r = 10\\text{ cm}$ đang quay đều. Khi kim giây quay đúng một vòng ($60\\text{ s}$) thì góc quét được $\\theta$ và quãng đường $s$ mà đầu kim giây đi được là:",
+            svg: SVGs.clockFace,
+            options: [
+                { text: "$\\theta = 2\\pi\\text{ rad};\\quad s = 20\\pi\\text{ cm}$.", isCorrect: true },
+                { text: "$\\theta = \\pi\\text{ rad};\\quad s = 10\\pi\\text{ cm}$.", isCorrect: false },
+                { text: "$\\theta = 2\\pi\\text{ rad};\\quad s = 10\\pi\\text{ cm}$.", isCorrect: false },
+                { text: "$\\theta = \\pi\\text{ rad};\\quad s = 20\\pi\\text{ cm}$.", isCorrect: false }
+            ],
+            explain: "Khi kim giây quay 1 vòng:<br>• Góc quét được: $\\theta = 2\\pi\\text{ rad}$.<br>• Quãng đường đầu kim đi được (chu vi đường tròn): $s = \\theta \\cdot r = 2\\pi \\times 10 = 20\\pi\\text{ cm}$ (Câu 2 Đúng/Sai trang 18 tài liệu)."
+        },
+        {
+            id: "L2_5",
+            text: "Một vật chuyển động tròn đều trên đường tròn bán kính $r = 50\\text{ cm} = 0,5\\text{ m}$. Sau thời gian $t = 2\\text{ s}$ vật đi được cung tròn dài $s = 6\\text{ cm} = 0,06\\text{ m}$. Góc ở tâm $\\theta$ bán kính quét được và tốc độ góc $\\omega$ của vật là:",
+            svg: SVGs.arcRadian,
+            options: [
+                { text: "$\\theta = 0,12\\text{ rad};\\quad \\omega = 0,06\\text{ rad/s}$.", isCorrect: true },
+                { text: "$\\theta = 0,12\\text{ rad};\\quad \\omega = 0,24\\text{ rad/s}$.", isCorrect: false },
+                { text: "$\\theta = 0,03\\text{ rad};\\quad \\omega = 0,06\\text{ rad/s}$.", isCorrect: false },
+                { text: "$\\theta = 12\\text{ rad};\\quad \\omega = 6\\text{ rad/s}$.", isCorrect: false }
+            ],
+            explain: "• Góc ở tâm quét được sau 2 giây: $\\theta = \\dfrac{s}{r} = \\dfrac{0,06}{0,5} = 0,12\\text{ rad}$.<br>• Tốc độ góc của vật: $\\omega = \\dfrac{\\theta}{t} = \\dfrac{0,12}{2} = 0,06\\text{ rad/s}$ (Câu 1 Tự luận trang 14 tài liệu)."
+        }
+    ],
+
+    // ================= CẤP ĐỘ 3: 5 CÂU THÔNG HIỂU CƠ BẢN (9 - 10 ĐIỂM) =================
+    3: [
+        {
+            id: "L3_1",
+            text: "Trên mặt một chiếc đồng hồ đang chạy bình thường, kim phút quay 1 vòng hết $T_{\\text{ph}} = 1\\text{ giờ}$, còn kim giờ quay 1 vòng hết $T_{\\text{g}} = 12\\text{ giờ}$. Tỉ số tốc độ góc giữa kim phút và kim giờ $\\left(\\dfrac{\\omega_{\\text{ph}}}{\\omega_{\\text{g}}}\\right)$ bằng bao nhiêu?",
+            svg: SVGs.clockFace,
+            options: [
+                { text: "$12$", isCorrect: true },
+                { text: "$60$", isCorrect: false },
+                { text: "$24$", isCorrect: false },
+                { text: "$6$", isCorrect: false }
+            ],
+            explain: "Vì tốc độ góc tỉ lệ nghịch với chu kì $\\left(\\omega = \\dfrac{2\\pi}{T}\\right)$ nên:<br>$$\\frac{\\omega_{\\text{ph}}}{\\omega_{\\text{g}}} = \\frac{T_{\\text{g}}}{T_{\\text{ph}}} = \\frac{12\\text{ giờ}}{1\\text{ giờ}} = 12$$ (Câu 23 trang 7 tài liệu)."
+        },
+        {
+            id: "L3_2",
+            text: "Một bánh đà hình tròn có bán kính $R = 50\\text{ cm} = 0,5\\text{ m}$ đang quay đều quanh trục với chu kì $T = 0,2\\text{ s}$. Lấy $\\pi \\approx 3,14$. Tốc độ góc $\\omega$ và tốc độ dài $v_A$ của một điểm $A$ nằm ở vành ngoài bánh đà là:",
+            svg: SVGs.fanBlades,
+            options: [
+                { text: "$\\omega = 10\\pi\\text{ rad/s};\\quad v_A \\approx 15,7\\text{ m/s}$.", isCorrect: true },
+                { text: "$\\omega = 10\\pi\\text{ rad/s};\\quad v_A \\approx 7,85\\text{ m/s}$.", isCorrect: false },
+                { text: "$\\omega = 5\\pi\\text{ rad/s};\\quad v_A \\approx 15,7\\text{ m/s}$.", isCorrect: false },
+                { text: "$\\omega = 20\\pi\\text{ rad/s};\\quad v_A \\approx 31,4\\text{ m/s}$.", isCorrect: false }
+            ],
+            explain: "• Tốc độ góc: $\\omega = \\dfrac{2\\pi}{T} = \\dfrac{2\\pi}{0,2} = 10\\pi\\text{ rad/s}$.<br>• Tốc độ dài tại vành ngoài ($r = 0,5\\text{ m}$): $v_A = \\omega \\cdot R = 10\\pi \\times 0,5 = 5\\pi \\approx 15,7\\text{ m/s}$ (Câu 35 trang 10 tài liệu)."
+        },
+        {
+            id: "L3_3",
+            text: "Một xe tải chuyển động thẳng đều với tốc độ $v = 72\\text{ km/h} = 20\\text{ m/s}$, có bánh xe đường kính $d = 80\\text{ cm}$ (bán kính $r = 0,4\\text{ m}$). Biết tốc độ dài của đầu van xe đối với trục bánh xe bằng tốc độ của xe tải ($20\\text{ m/s}$). Tốc độ góc $\\omega$ của bánh xe là:",
+            svg: SVGs.tangentVelocity,
+            options: [
+                { text: "$50\\text{ rad/s}$", isCorrect: true },
+                { text: "$25\\text{ rad/s}$", isCorrect: false },
+                { text: "$8\\text{ rad/s}$", isCorrect: false },
+                { text: "$180\\text{ rad/s}$", isCorrect: false }
+            ],
+            explain: "Bán kính bánh xe là $r = \\dfrac{d}{2} = \\dfrac{80}{2} = 40\\text{ cm} = 0,4\\text{ m}$.<br>Áp dụng công thức: $\\omega = \\dfrac{v}{r} = \\dfrac{20}{0,4} = 50\\text{ rad/s}$."
+        },
+        {
+            id: "L3_4",
+            text: "Vòng quay Mặt Trời (Sun Wheel) tại Đà Nẵng có bán kính $r = 52,5\\text{ m}$ quay đều hết một vòng trong thời gian $15\\text{ phút}$. Chu kì $T$ (tính ra giây) và quãng đường $s$ một cabin đi được trong một vòng quay (lấy $\\pi \\approx 3,14$) là:",
+            svg: SVGs.arcRadian,
+            options: [
+                { text: "$T = 900\\text{ s};\\quad s \\approx 330\\text{ m}$.", isCorrect: true },
+                { text: "$T = 15\\text{ s};\\quad s \\approx 330\\text{ m}$.", isCorrect: false },
+                { text: "$T = 900\\text{ s};\\quad s \\approx 165\\text{ m}$.", isCorrect: false },
+                { text: "$T = 600\\text{ s};\\quad s \\approx 330\\text{ m}$.", isCorrect: false }
+            ],
+            explain: "• Chu kì quay 1 vòng: $T = 15\\text{ phút} = 15 \\times 60 = 900\\text{ s}$.<br>• Quãng đường cabin đi 1 vòng bằng chu vi đường tròn: $s = 2\\pi r = 2 \\times 3,14 \\times 52,5 \\approx 330\\text{ m}$ (Phần III trang 18-19 tài liệu)."
+        },
+        {
+            id: "L3_5",
+            text: "<b>[Đọc đồ thị cơ bản]</b> Đồ thị bên dưới biểu diễn sự phụ thuộc của tốc độ dài $v$ theo khoảng cách $r$ từ điểm đang xét đến tâm quay của một đĩa tròn quay đều. Dựa vào đường gióng trên đồ thị tại $(r = 0,2\\text{ m};\\; v = 2,0\\text{ m/s})$, hãy xác định tốc độ góc $\\omega$ của đĩa:",
+            svg: SVGs.graphVR,
+            options: [
+                { text: "$\\omega = 10\\text{ rad/s}$", isCorrect: true },
+                { text: "$\\omega = 0,4\\text{ rad/s}$", isCorrect: false },
+                { text: "$\\omega = 5\\text{ rad/s}$", isCorrect: false },
+                { text: "$\\omega = 20\\text{ rad/s}$", isCorrect: false }
+            ],
+            explain: "Từ đường gióng trên đồ thị: tại $r = 0,2\\text{ m}$ thì $v = 2,0\\text{ m/s}$ (hoặc tại $r = 0,4\\text{ m}$ thì $v = 4,0\\text{ m/s}$).<br>Áp dụng công thức $v = \\omega \\cdot r \\Rightarrow \\omega = \\dfrac{v}{r} = \\dfrac{2,0}{0,2} = 10\\text{ rad/s}$."
+        }
+    ]
+};
+
+/* =========================================================================
+   4. QUẢN LÝ TRẠNG THÁI LÀM BÀI, ĐẢO CÂU HỎI & KIỂM SOÁT MỞ KHÓA
+   ========================================================================= */
+let currentLevel = 1;
+let level1PerfectCount = 0; // Đếm số lần đạt 12/12 ở Cấp độ 1 (cần 3 lần để mở khóa)
+let isUnlocked = false;     // Trạng thái mở khóa Cấp độ 2 & 3
+let unlockedByTeacher = false;
+
+let state = {
+    1: { answered: 0, correct: 0, total: 12, currentRoundCounted: false, questions: [] },
+    2: { answered: 0, correct: 0, total: 5, bestScore: 0, questions: [] },
+    3: { answered: 0, correct: 0, total: 5, bestScore: 0, questions: [] }
+};
+
+function shuffleArray(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+function prepareLevelQuestions(lvl) {
+    const rawList = questionBank[lvl];
+    const shuffledQuestions = shuffleArray(rawList).map(q => {
+        return {
+            ...q,
+            shuffledOptions: shuffleArray(q.options),
+            userSelected: null
+        };
+    });
+    state[lvl].questions = shuffledQuestions;
+    state[lvl].answered = 0;
+    state[lvl].correct = 0;
+    state[lvl].currentRoundCounted = false;
+}
+
+function renderQuiz() {
+    const quizArea = document.getElementById('quizArea');
+    const currentData = state[currentLevel];
+    const letters = ['A', 'B', 'C', 'D'];
+
+    let html = '';
+    currentData.questions.forEach((q, qIdx) => {
+        html += `
+        <div class="question-card" id="qcard_${qIdx}">
+            <div class="q-header">
+                <span>CÂU HỎI ${qIdx + 1} / ${currentData.total} (Cấp độ ${currentLevel})</span>
+                <span id="qstatus_${qIdx}">Chưa trả lời</span>
+            </div>
+            <div class="q-text">${q.text}</div>
+            ${q.svg ? `<div class="svg-container">${q.svg}</div>` : ''}
+            <div class="options-list">
+                ${q.shuffledOptions.map((opt, oIdx) => `
+                    <button class="option-btn" id="opt_${qIdx}_${oIdx}" onclick="selectAnswer(${qIdx}, ${oIdx})">
+                        <span class="opt-letter">${letters[oIdx]}</span>
+                        <span>${opt.text}</span>
+                    </button>
+                `).join('')}
+            </div>
+            <div class="feedback-box" id="fb_${qIdx}"></div>
+        </div>`;
+    });
+
+    quizArea.innerHTML = html;
+    updateTopUI();
+
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([quizArea]);
+    }
+}
+
+function selectAnswer(qIdx, oIdx) {
+    const currentData = state[currentLevel];
+    const q = currentData.questions[qIdx];
+    if (q.userSelected !== null) return;
+
+    q.userSelected = oIdx;
+    currentData.answered++;
+
+    const chosenOpt = q.shuffledOptions[oIdx];
+    const isCorrect = chosenOpt.isCorrect;
+
+    playFunnySound(isCorrect);
+
+    q.shuffledOptions.forEach((opt, idx) => {
+        const btn = document.getElementById(`opt_${qIdx}_${idx}`);
+        btn.disabled = true;
+        if (opt.isCorrect) {
+            btn.classList.add('correct');
+        } else if (idx === oIdx && !isCorrect) {
+            btn.classList.add('wrong');
+        }
+    });
+
+    const statusSpan = document.getElementById(`qstatus_${qIdx}`);
+    const fbBox = document.getElementById(`fb_${qIdx}`);
+
+    if (isCorrect) {
+        currentData.correct++;
+        statusSpan.innerHTML = '✅ Chính xác!';
+        statusSpan.style.color = 'var(--success)';
+        fbBox.className = 'feedback-box show ok';
+        fbBox.innerHTML = `<strong>🎉 Tuyệt vời! Đáp án ĐÚNG.</strong><br>${q.explain}`;
+    } else {
+        statusSpan.innerHTML = '❌ Chưa đúng';
+        statusSpan.style.color = 'var(--danger)';
+        fbBox.className = 'feedback-box show err';
+        fbBox.innerHTML = `<strong>💡 Rất tiếc! Đáp án chưa chính xác.</strong><br>${q.explain}`;
+    }
+
+    if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([fbBox]);
+    }
+
+    checkLevelCompletion();
+    updateTopUI();
+}
+
+function checkLevelCompletion() {
+    const d = state[currentLevel];
+    if (d.answered < d.total) return;
+
+    if (currentLevel === 1 && !d.currentRoundCounted) {
+        d.currentRoundCounted = true;
+        if (d.correct === 12) {
+            level1PerfectCount++;
+            if (level1PerfectCount >= 3) {
+                isUnlocked = true;
+                setTimeout(() => {
+                    alert("🎊 CHÚC MỪNG EM! Em đã hoàn thành 12/12 câu Cấp độ 1 đủ 3 lần! Cấp độ 2 và Cấp độ 3 đã chính thức MỞ KHÓA!");
+                }, 200);
+            } else {
+                setTimeout(() => {
+                    alert(`👏 Giỏi lắm! Em đã đạt 12/12 câu Cấp độ 1 (Lần ${level1PerfectCount}/3).\nHãy bấm nút "Đảo đề & Làm lại Cấp độ này" thêm ${3 - level1PerfectCount} lần đạt 12/12 nữa để mở khóa Cấp độ 2, 3 nhé!`);
+                }, 200);
+            }
+        } else {
+            setTimeout(() => {
+                alert(`📌 Em đạt ${d.correct}/12 câu ở lượt này.\nYêu cầu bắt buộc: Phải đúng tuyệt đối 12/12 câu đủ 3 lần mới mở khóa Cấp độ tiếp theo. Hãy bấm "Đảo đề & Làm lại Cấp độ này" để thử lại nhé!`);
+            }, 200);
+        }
+    } else if (currentLevel > 1) {
+        if (d.correct > d.bestScore) d.bestScore = d.correct;
+    }
+}
+
+function updateTopUI() {
+    document.getElementById('badge1').innerText = `Đạt 12/12: ${level1PerfectCount}/3 lần (Hiện tại: ${state[1].correct}/12)`;
+    
+    const tab2 = document.getElementById('tab2');
+    const tab3 = document.getElementById('tab3');
+    const badge2 = document.getElementById('badge2');
+    const badge3 = document.getElementById('badge3');
+
+    if (isUnlocked) {
+        tab2.classList.remove('locked');
+        tab3.classList.remove('locked');
+        tab2.querySelector('div').innerText = '🔓 CẤP ĐỘ 2 (7 - 8 Điểm: 5 câu)';
+        tab3.querySelector('div').innerText = '🔓 CẤP ĐỘ 3 (9 - 10 Điểm: 5 câu)';
+        badge2.innerText = `Đúng: ${state[2].correct}/5 câu`;
+        badge3.innerText = `Đúng: ${state[3].correct}/5 câu`;
+    } else {
+        badge2.innerText = 'Chưa mở khóa';
+        badge3.innerText = 'Chưa mở khóa';
+    }
+
+    [1, 2, 3].forEach(lvl => {
+        const t = document.getElementById(`tab${lvl}`);
+        if (lvl === currentLevel) t.classList.add('active');
+        else t.classList.remove('active');
+    });
+
+    const statusTitle = document.getElementById('statusTitle');
+    const statusDesc = document.getElementById('statusDesc');
+    if (currentLevel === 1) {
+        statusTitle.innerText = `📌 Cấp độ 1 (Đã làm: ${state[1].answered}/12 câu | Đúng: ${state[1].correct}/12):`;
+        statusDesc.innerHTML = isUnlocked
+            ? `✅ Đã mở khóa tất cả các cấp độ! (Số lần đạt 12/12: <b>${level1PerfectCount}</b> lần)`
+            : `Cần đúng <b>12/12 câu</b> đủ <b>3 lần</b> để mở khóa Cấp độ 2 & 3 (Hiện tại: <b>${level1PerfectCount}/3 lần</b>).`;
+    } else {
+        statusTitle.innerText = `📌 Cấp độ ${currentLevel} (Đã làm: ${state[currentLevel].answered}/5 câu | Đúng: ${state[currentLevel].correct}/5):`;
+        statusDesc.innerHTML = `Các câu hỏi mức độ Thông hiểu cơ bản giúp vận dụng công thức chuyển động tròn đều.`;
+    }
+}
+
+function switchLevel(lvl) {
+    if (lvl > 1 && !isUnlocked) {
+        playFunnySound(false);
+        alert("🔒 Cấp độ này đang khóa!\nHọc sinh bắt buộc phải hoàn thành 12 câu Cấp độ 1 và đạt đúng 12/12 câu đủ 3 lần mới được chuyển lên.\n(Dành cho Giáo viên: Nhập mật mã vào ô **** để mở khóa).");
+        return;
+    }
+    currentLevel = lvl;
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function retryCurrentLevel() {
+    prepareLevelQuestions(currentLevel);
+    renderQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Chế độ Mở khóa cho Giáo viên (Ẩn hoàn toàn mã 1819 dưới dạng kí tự *)
+function unlockByTeacher() {
+    const inputEl = document.getElementById('teacherCode');
+    const code = inputEl.value.trim();
+    if (code === '1819') {
+        isUnlocked = true;
+        unlockedByTeacher = true;
+        inputEl.value = '';
+        playFunnySound(true);
+        updateTopUI();
+        alert("🔓 Xác nhận mật mã Giáo viên thành công! Đã mở khóa toàn bộ Cấp độ 2 và Cấp độ 3.");
+    } else {
+        inputEl.value = '';
+        playFunnySound(false);
+        alert("❌ Mật mã Giáo viên không đúng!");
+    }
+}
+
+/* =========================================================================
+   5. BÁO CÁO HỌ TÊN & KẾT QUẢ THỰC HIỆN
+   ========================================================================= */
+function showReportModal() {
+    const name = document.getElementById('studentName').value.trim() || "Chưa nhập Họ tên";
+    const cls = document.getElementById('studentClass').value.trim() || "Chưa nhập Lớp";
+
+    const totalCorrect = state[1].correct + state[2].correct + state[3].correct;
+    const score10 = ((totalCorrect / 22) * 10).toFixed(2);
+
+    const reportHTML = `
+        <p>👤 <b>Họ và tên học sinh:</b> ${name}</p>
+        <p>🏫 <b>Lớp:</b> ${cls}</p>
+        <hr style="margin:8px 0; border:none; border-top:1px solid #cbd5e1;">
+        <p>📘 <b>Chuyên đề:</b> Bài 31 - Động học của chuyển động tròn đều</p>
+        <p>🟢 <b>Cấp độ 1 (12 câu Nhận biết):</b> Đúng ${state[1].correct}/12 câu <i>(Số lần đạt 12/12: <b>${level1PerfectCount} lần</b>)</i></p>
+        <p>🟡 <b>Cấp độ 2 (5 câu 7-8 điểm):</b> Đúng ${state[2].correct}/5 câu</p>
+        <p>🔴 <b>Cấp độ 3 (5 câu 9-10 điểm):</b> Đúng ${state[3].correct}/5 câu</p>
+        <hr style="margin:8px 0; border:none; border-top:1px solid #cbd5e1;">
+        <p>🌟 <b>Tổng số câu đúng hiện tại:</b> <b>${totalCorrect} / 22 câu</b> (Quy đổi: <b>${score10} / 10 điểm</b>)</p>
+        <p>🔑 <b>Trạng thái mở khóa:</b> ${unlockedByTeacher ? "Mở bằng mật mã Giáo viên" : (isUnlocked ? "Học sinh tự vượt qua 3 lần 12/12" : "Chưa mở khóa Cấp 2, 3")}</p>
+    `;
+    document.getElementById('reportContent').innerHTML = reportHTML;
+    document.getElementById('reportModal').classList.add('active');
+}
+
+function closeReportModal() {
+    document.getElementById('reportModal').classList.remove('active');
+}
+
+function copyReport() {
+    const text = document.getElementById('reportContent').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("✅ Đã sao chép phiếu báo cáo kết quả! Em có thể dán (Paste) gửi cho Giáo viên.");
+    });
+}
+
+window.onload = function() {
+    prepareLevelQuestions(1);
+    prepareLevelQuestions(2);
+    prepareLevelQuestions(3);
+    renderQuiz();
+};
+</script>
+</body>
+</html>
